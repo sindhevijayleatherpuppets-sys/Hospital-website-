@@ -80,24 +80,38 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ---
 
-## Deployment Guide
+## Connecting Supabase (PostgreSQL Backend)
 
-### Deploying to Vercel
-
-1. Push your code to a GitHub repository:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit of Dhanvanthari Hospital web application"
-   git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-   git branch -M main
-   git push -u origin main
+1. Create a free project at [Supabase](https://supabase.com).
+2. Once your project is created, navigate to:
+   - **Project Settings** (gear icon) &rarr; **Database**
+   - Under **Connection string**, select **URI**.
+   - Copy the URI string (it looks like `postgresql://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true`).
+3. In your local `.env` file, set:
+   ```env
+   DATABASE_URL="your-supabase-connection-uri-with-password"
+   JWT_SECRET="ayurcare-dhanvanthari-hospital-jwt-secret-key-2026-prod"
    ```
-2. Import the project in [Vercel](https://vercel.com).
-3. Set the environment variables in your Vercel project settings:
-   - `JWT_SECRET`: A secure 32+ character random string.
-   - `DATABASE_URL`: Connection string for your production database (PostgreSQL, Supabase, Neon, or Prisma Postgres).
-4. Deploy!
+4. Push the database schema and seed the initial hospital data directly into Supabase:
+   ```bash
+   # Push schema tables (User, Appointment, Prescription, Product, GalleryImage)
+   npm run db:push
+
+   # Seed default staff (Doctor, Receptionist), sample patients, and Ayurvedic medicines
+   npm run db:seed
+   ```
+
+---
+
+## Deploying to Vercel
+
+1. Go to [Vercel](https://vercel.com/new).
+2. Connect your GitHub account and import:
+   **`sindhevijayleatherpuppets-sys/Hospital-website-`**
+3. In **Environment Variables**, add the two required variables:
+   - **`DATABASE_URL`**: Your Supabase PostgreSQL Connection URI.
+   - **`JWT_SECRET`**: `ayurcare-dhanvanthari-hospital-jwt-secret-key-2026-prod` (or any secure 32+ character string).
+4. Click **Deploy**. Vercel will build and assign you a live HTTPS URL (e.g. `https://hospital-website-xyz.vercel.app`) in under 60 seconds!
 
 ---
 
