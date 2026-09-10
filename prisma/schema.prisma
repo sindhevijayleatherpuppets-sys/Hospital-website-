@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String
+  role         String        // 'PATIENT', 'DOCTOR', 'RECEPTIONIST'
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Appointment {
+  id              String         @id @default(uuid())
+  date            DateTime
+  status          String         // 'PENDING', 'APPROVED', 'COMPLETED', 'CANCELLED'
+  consultationFee Float          @default(500.0)
+  paymentStatus   String         @default("PENDING") // 'PAID_ONLINE', 'PAY_AT_HOSPITAL', 'PAID_AT_COUNTER'
+  paymentMethod   String?        // 'UPI_QR', 'HOSPITAL_COUNTER'
+  transactionId   String?        // UPI UTR / Reference ID for verified payments
+  disease         String?
+  patientId       String
+  patient         User           @relation(fields: [patientId], references: [id])
+  prescription    Prescription?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([patientId])
+  @@index([status])
+  @@index([date])
+}
+
+model Prescription {
+  id            String      @id @default(uuid())
+  text          String
+  disease       String?
+  medicines     String?
+  dosage        String?
+  dietAdvice    String?
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GalleryImage {
+  id          String   @id @default(uuid())
+  title       String
+  url         String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
