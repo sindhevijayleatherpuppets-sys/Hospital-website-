@@ -1,9 +1,16 @@
 import prisma from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export default async function GalleryPage() {
-  const images = await prisma.galleryImage.findMany({
-    orderBy: { createdAt: 'desc' }
-  });
+  let images: any[] = [];
+  try {
+    images = await prisma.galleryImage.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (err) {
+    console.error('Error fetching gallery images from database:', err);
+  }
 
   return (
     <div className="animate-fade-in container" style={{ padding: 'var(--spacing-3xl) var(--spacing-lg)' }}>

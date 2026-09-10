@@ -1,10 +1,87 @@
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
+type StoreProduct = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+const FALLBACK_PRODUCTS: StoreProduct[] = [
+  {
+    id: 'fb-1',
+    name: 'Ashwagandha Rasayana Powder',
+    description: 'Premier adaptogenic formulation for vitality, stress balance, and deep nervous system rejuvenation.',
+    price: 299,
+    imageUrl: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=600&q=80',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 'fb-2',
+    name: 'Triphala Churna (Organic Detox)',
+    description: 'Classical combination of Amalaki, Bibhitaki, and Haritaki for optimal digestive fire and gentle colon cleansing.',
+    price: 199,
+    imageUrl: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=600&q=80',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 'fb-3',
+    name: 'Kshirabala Thailam & Brahmi Oil',
+    description: 'Classical medicated sesame oil boiled 101 times with cow milk and Sida cordifolia for sound sleep and joint relief.',
+    price: 349,
+    imageUrl: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 'fb-4',
+    name: 'Dhanvanthari Gulika & Tablets',
+    description: 'Time-tested Ayurvedic formulation for digestive discomfort, gas, and balancing vata dosha.',
+    price: 249,
+    imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 'fb-5',
+    name: 'Chyawanprash Awaleha',
+    description: 'Potent amla-based immunity booster packed with 40+ rejuvenating herbs for year-round respiratory strength.',
+    price: 399,
+    imageUrl: 'https://images.unsplash.com/photo-1577401239170-897942555fb3?auto=format&fit=crop&w=600&q=80',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 'fb-6',
+    name: 'Mahanarayana Muscle Care Oil',
+    description: 'Traditional Ayurvedic therapeutic massage oil for deep muscle relaxation, stiffness, and joint mobility.',
+    price: 375,
+    imageUrl: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+];
+
 export default async function MedicineStorePage() {
-  const products = await prisma.product.findMany({
-    orderBy: { price: 'asc' }
-  });
+  let products: StoreProduct[] = FALLBACK_PRODUCTS;
+  try {
+    const dbProducts = await prisma.product.findMany({
+      orderBy: { price: 'asc' }
+    });
+    if (dbProducts && dbProducts.length > 0) {
+      products = dbProducts;
+    }
+  } catch (err) {
+    console.error('Database connection error in MedicineStorePage, using fallback products:', err);
+  }
 
   return (
     <div className="animate-fade-in container" style={{ padding: 'var(--spacing-3xl) var(--spacing-lg)' }}>
