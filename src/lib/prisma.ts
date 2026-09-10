@@ -4,7 +4,12 @@ import { Pool } from 'pg'
 
 const prismaClientSingleton = () => {
   const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres'
-  const pool = new Pool({ connectionString })
+  const isRemote = connectionString.includes('supabase') || connectionString.includes('sslmode=require') || connectionString.includes('.com')
+  
+  const pool = new Pool({ 
+    connectionString,
+    ssl: isRemote ? { rejectUnauthorized: false } : undefined
+  })
   const adapter = new PrismaPg(pool)
   return new PrismaClient({ adapter })
 }
