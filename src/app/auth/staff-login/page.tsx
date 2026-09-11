@@ -15,6 +15,8 @@ export default async function StaffLoginPage({ searchParams }: StaffLoginPagePro
         return 'Invalid official staff email address or password. Please verify your staff credentials.';
       case 'MissingFields':
         return 'Please enter both your official email and staff password.';
+      case 'DatabaseError':
+        return 'Unable to reach the hospital database server. Please check your network or try again in a few moments.';
       default:
         return null;
     }

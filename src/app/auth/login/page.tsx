@@ -15,6 +15,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         return 'Invalid email address or password. Please check your credentials and try again.';
       case 'MissingFields':
         return 'Please enter both your email address and password.';
+      case 'DatabaseError':
+        return 'Unable to reach the hospital database server. Please check your network or try again in a few moments.';
       default:
         return null;
     }
